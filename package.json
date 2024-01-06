@@ -23,8 +23,16 @@
   "author": "Kai Vik",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^20.10.6",
+    "@types/opentype.js": "^1.3.8",
     "babel-cli": "^6.5.1",
     "babel-preset-es2015": "^6.5.0",
-    "babel-preset-stage-0": "^6.5.0"
+    "babel-preset-stage-0": "^6.5.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "node-fs": "^0.1.7",
+    "opentype.js": "^1.3.4"
   }
 }

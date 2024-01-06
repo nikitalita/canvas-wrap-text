@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"module": "commonjs",
+		"lib": ["es2016", "dom"],
+		"noUnusedLocals": false,
+		"noUnusedParameters": true,
+		"preserveConstEnums": true,
+		"declaration": true,
+		"useUnknownInCatchVariables": false,
+		"strict": true,
+		"sourceMap": true,
+		"sourceRoot": "../src",
+		"outDir": "dist"
+	},
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
+}
