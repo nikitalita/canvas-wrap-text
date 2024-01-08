@@ -3,3 +3,5 @@ node_modules/
 dist/
 .vscode/
 out.png
+demo/bundle.js
+.DS_Store

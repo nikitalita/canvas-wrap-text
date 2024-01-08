@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, shrink-to-fit=0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <title>opentype-layout</title>
+  <title>Node canvas text test</title>
   <style>
   @font-face {
-    font-family: 'CCWildWordsLower';
-    src: url('CCWildWordsLower-Regular.ttf')
+    font-family: 'TestFont';
+    src: url('TestFont.ttf')
   }
   body {
     margin: 0;
-    font-family: 'CCWildWordsLower', sans-serif;
+    font-family: 'TestFont', sans-serif;
     font-size: 14px;
   }
   canvas {
@@ -64,7 +64,7 @@
     <div>Line Height: <input id="lineHeight" type="text" value="1.2"></div>
     <!-- <div id="text">The quick brown fox jumped over the lazy dog.</div> -->
     <div id="textparent">
-      <div id="text" style="display:table-cell; vertical-align: middle">The quick brown fox jumped over the lazy dog.</div>
+      <div id="text" style="display:none; vertical-align: middle">The quick brown fox jumped over the lazy dog.</div>
     </div>
     <canvas id="canvas"></canvas>
   </div>

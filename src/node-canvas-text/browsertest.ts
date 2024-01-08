@@ -10,7 +10,7 @@ const element = document.querySelector('#textparent') as HTMLElement;
 
 // get the text from the element
 
-const fontPath = 'CCWildWordsLower-Regular.ttf';
+const fontPath = 'TestFont.ttf';
 opentype.load(fontPath, (err, font) => {
     if (err) throw err;
 
@@ -104,6 +104,7 @@ function render(font: opentype.Font) {
         textFillStyle: "#000000",
         rectFillOnlyText: true,
         textDescentAlignment: "box",
+        hyphenate: true,
         fitMethod: "linebreaks"
     })
     element.style.fontSize = fontSize / dpr + "px";

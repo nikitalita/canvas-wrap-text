@@ -1,10 +1,7 @@
 import { Font } from "opentype.js";
 
 // import default from linebreak
-import LineBreaker from 'linebreak';
-import { HyphenationFunctionSync } from 'hyphen';
-import { hyphenateSync } from 'hyphen/en-us';
-import * as tex_linebreak from 'tex-linebreak';
+import { Brk, GetBreaks, SetBreakWidths, GetLines } from './linebreaks';
 export interface DrawOptions {
     drawRect: boolean;
     textDescentAlignment: "baseline" | "box";
@@ -42,151 +39,6 @@ interface TextMetrics {
     actualBoundingBoxDescent: number;
     fontBoundingBoxAscent: number;
     fontBoundingBoxDescent: number;
-}
-function getLines2(fontObject: Font, text: string, fontSize: number, paddedRect: DrawRectangle, options: DrawOptions) {
-    const measure = (text: string) => {
-        return measureText(text, fontObject, fontSize, options.textDescentAlignment).width;
-    }
-    let items = tex_linebreak.layoutItemsFromString(text, measure);
-    const forcedBreaks: number[] = [];
-
-    for (let i = 0; i < items.length; i++) {
-        let item = items[i];
-        if (item.type === "glue") {
-            if (item.text.includes('\n')) {
-                // forcedBreaks.push(i);
-                // item.width = paddedRect.width + 1;
-            }
-        }
-    }
-    // for (let i = forcedBreaks.length - 1; i >= 0; i--) {
-    //     // insert a tex_linebreak.forcedBreak() in between the items
-    //     items = items.slice(0, forcedBreaks[i] + 1).concat(tex_linebreak.forcedBreak()).concat(items.slice(forcedBreaks[i] + 1));
-    // }
-    const breakpoints = tex_linebreak.breakLines(items, paddedRect.width, {
-        maxAdjustmentRatio: 1.0,
-        initialMaxAdjustmentRatio: 1.0
-
-    });
-    var lines: { text: string, metrics: TextMetrics }[] = [];
-    let curLineStart = 0;
-    for (let i = 0; i < breakpoints.length; i++) {
-        if (breakpoints[i] === 0) {
-            continue;
-        }
-        let curLine = "";
-        let width = 0;
-        items.slice(curLineStart, breakpoints[i]).forEach((item) => {
-            if (item.type !== "penalty") {
-                curLine += item.text;
-                width += item.width;
-            }
-        });
-        lines.push({ text: curLine, metrics: { width: width } as TextMetrics });
-        curLineStart = breakpoints[i] + 1;
-    }
-    //TODO: remove
-    for (let line of lines) {
-        if (line.metrics.width > paddedRect.width) {
-            console.log("line '" + line.text + "' width is too large: " + line.metrics.width + " > " + paddedRect.width);
-        }
-    }
-    return lines;
-}
-function getLines(fontObject: Font, text: string, fontSize: number, paddedRect: DrawRectangle, options: DrawOptions) {
-    let largestWidth = 0;
-    let textcopy = text;
-    let lineMetrics = measureText(textcopy, fontObject, fontSize, options.textDescentAlignment);
-    let lastMetric: TextMetrics = lineMetrics;
-    let lines: { text: string, metrics: TextMetrics }[] = [];
-    let substrWidths = getAllPossibleSubstrWidths(text, fontObject, fontSize);
-    while ((lineMetrics.width > paddedRect.width)) {
-        // iterate over all the linebreaks until we reach one that goes over paddedRect.width, then use the previous one
-        let breaker = new LineBreaker(textcopy);
-        let lastBreak: Break = { position: 0, required: false };
-        let bk: Break;
-        while (bk = breaker.nextBreak()) {
-            let substr = textcopy.slice(0, bk.position);
-            let possibleText = substr.trimEnd();
-            let brkEndPos = bk.position + substr.length - possibleText.length;
-            let possibleMetrics = measureText(possibleText, fontObject, fontSize, options.textDescentAlignment);
-            if (possibleMetrics.width > paddedRect.width) {
-                if (options.hyphenate) {
-                    // check to see if the word between the last break and the current break can be hyphenated
-                    let line = textcopy.slice(0, lastBreak.position)
-                    let word = textcopy.slice(lastBreak.position, bk.position);
-                    let hyphenatedWord = hyphenateSync(word);
-                    let hyphenatedparts = hyphenatedWord.split("\u00AD")
-                    if (hyphenatedparts.length > 1) {
-                        let i = 0;
-                        let partpos = lastBreak.position;
-                        let hyphenatedpartspos = hyphenatedparts.map((part) => {
-                            let ret = partpos;
-                            partpos += part.length;
-                            return ret;
-                        });
-                        for (i = hyphenatedparts.length - 1; i >= 0; i--) {
-                            possibleText = line + hyphenatedparts.slice(0, i).join("") + "-";
-                            possibleMetrics = measureText(possibleText, fontObject, fontSize, options.textDescentAlignment);
-                            if (possibleMetrics.width <= paddedRect.width) {
-                                break;
-                            }
-                        }
-                        if (i >= 0) {
-                            // we found a hyphenation that works
-                            lines.push({
-                                text: possibleText,
-                                metrics: possibleMetrics
-                            });
-                            textcopy = textcopy.slice(hyphenatedpartspos[i]);
-                            break;
-                        }
-                    }
-                }
-                if (lastBreak.position == 0) {
-                    // panic mode, we have to break on a word
-                    for (lastBreak.position = bk.position - 1; lastBreak.position > 0; lastBreak.position--) {
-                        possibleText = textcopy.slice(0, lastBreak.position).trim();
-                        possibleMetrics = measureText(possibleText, fontObject, fontSize, options.textDescentAlignment);
-                        if (possibleMetrics.width <= paddedRect.width) {
-                            break;
-                        }
-                    }
-                    if (lastBreak.position == 0) {
-                        // welp, just make this a single character
-                        lastBreak.position = 1;
-                    }
-                    lastMetric = possibleMetrics;
-                }
-                // we have gone over the paddedRect.width, so use the last break
-                // TODO: hyphenate
-                lines.push({
-                    text: textcopy.slice(0, lastBreak.position).trimEnd(),
-                    metrics: lastMetric
-                });
-                textcopy = textcopy.slice(lastBreak.position).trimStart();
-                break;
-            } else if (bk.required) {
-                lines.push({
-                    text: possibleText,
-                    metrics: possibleMetrics
-                });
-                textcopy = textcopy.slice(bk.position); // if explicit linebreak, don't trim, just skip over the linebreak
-                break;
-            }
-            lastBreak = bk;
-            lastMetric = possibleMetrics;
-            largestWidth = largestWidth < possibleMetrics.width ? possibleMetrics.width : largestWidth;
-        }
-        lineMetrics = measureText(textcopy, fontObject, fontSize, options.textDescentAlignment);
-    }
-    // push the last line
-    lines.push({
-        text: textcopy,
-        metrics: lineMetrics
-    });
-
-    return lines;
 }
 
 export function getAllPossibleSubstrWidths(text: string, font: Font, fontSize: number) {
@@ -303,7 +155,7 @@ export default function drawText(
     let totalWidth = textMetrics.width;
     let totalHeight = textMetrics.height;
     let actualBoundingBoxDescent = textMetrics.actualBoundingBoxDescent;
-    let lines: { text: string, metrics: TextMetrics }[] = [];
+    let lines: { text: string, width: number }[] = [];
     let lineHeightEM = fontObject.unitsPerEm * options.leading;
     let scale = 1 / fontObject.unitsPerEm * fontSize
     let lineHeight = lineHeightEM * scale;
@@ -318,31 +170,49 @@ export default function drawText(
             scale = 1 / fontObject.unitsPerEm * fontSize
             lineHeight = lineHeightEM * scale;
         }
-        lines = [{ text: text, metrics: textMetrics }];
+        lines = [{ text: text, width: textMetrics.width }];
     } else if (options.fitMethod == 'linebreaks') {
         // we have to use linebreaker to determine the best font size
-        while (fontSize >= options.minSize) {
-            lines = getLines2(fontObject, text, fontSize, paddedRect, options);
-            actualBoundingBoxDescent = fontObject.descender * scale * options.leading; // use the font's descender instead of the text's actual descender to stop the text from wobbling up and down
-            // get the largest width
-            totalWidth = lines.map((line) => line.metrics.width).reduce((a, b) => Math.max(a, b));
-            lineHeightEM = fontObject.unitsPerEm * options.leading;
-            scale = 1 / fontObject.unitsPerEm * fontSize
-            lineHeight = lineHeightEM * scale;
-            let AD = Math.abs(fontObject.ascender - fontObject.descender);
-            let L = lineHeightEM - AD;
-            let totalHeightEM = (AD + L) * lines.length;
-            totalHeight = totalHeightEM * scale;
-            if (totalHeight <= paddedRect.height) {
-                break; // totalHeight and totalWidth are both within the paddedRect, so we're done
-            } else { // step down in font size and try again
+        if (totalWidth > paddedRect.width || totalHeight > paddedRect.height) {
+            let breaks = GetBreaks(text, options.hyphenate);
+            while (fontSize >= options.minSize) {
+                const measure = (text: string) => {
+                    return measureText(text, fontObject, fontSize, options.textDescentAlignment).width;
+                }
+                let AD = Math.abs(fontObject.ascender - fontObject.descender);
+                let L = lineHeightEM - AD;
+                lineHeight = lineHeightEM * scale;
+                lineHeightEM = fontObject.unitsPerEm * options.leading;
+                scale = 1 / fontObject.unitsPerEm * fontSize
+                actualBoundingBoxDescent = fontObject.descender * scale * options.leading; // use the font's descender instead of the text's actual descender to stop the text from wobbling up and down
+                // lowpass filter here; we're going to take the best case scenario
+                let estimatedLines = Math.ceil(totalWidth / paddedRect.width);
+                let estimatedHeight = (AD + L) * estimatedLines * scale;
+                if (estimatedHeight <= paddedRect.height) {
+                    lines = GetLines(breaks, paddedRect.width, measure);
+                    // get the largest width
+                    totalWidth = lines.map((line) => line.width).reduce((a, b) => Math.max(a, b));
+
+                    let totalHeightEM = (AD + L) * lines.length;
+                    totalHeight = totalHeightEM * scale;
+                    if (totalHeight <= paddedRect.height) {
+                        break; // totalHeight and totalWidth are both within the paddedRect, so we're done
+                    }
+                }
+                // height check failed, so we need to shrink the font size
                 if (fontSize - options.granularity < options.minSize && fontSize > options.minSize) {
                     fontSize = options.minSize; // clamp to minSize
                 } else {
                     fontSize = fontSize - options.granularity;
                 }
+                textMetrics = measureText(text, fontObject, fontSize, options.textDescentAlignment);
+                totalWidth = textMetrics.width;
+
             }
+        } else {
+            lines = [{ text: text, width: textMetrics.width }];
         }
+
         if (fontSize < options.minSize) {
             fontSize = options.minSize;
         }
@@ -390,7 +260,7 @@ export default function drawText(
     var lineYPos = startYPos;
     for (let i = lines.length - 1; i >= 0; i--) {
         var line = lines[i];
-        let fontPath = fontObject.getPath(line.text, calcXPos(line.metrics.width, paddedRect.x), lineYPos, fontSize);
+        let fontPath = fontObject.getPath(line.text, calcXPos(line.width, paddedRect.x), lineYPos, fontSize);
         fontPath.fill = options.textFillStyle;
         ctx.save();
         fontPath.draw(ctx);
