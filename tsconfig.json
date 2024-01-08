@@ -8,10 +8,16 @@
 		"preserveConstEnums": true,
 		"declaration": true,
 		"useUnknownInCatchVariables": false,
+		"forceConsistentCasingInFileNames": true,
 		"strict": true,
 		"sourceMap": true,
-		"sourceRoot": "../src",
-		"outDir": "dist"
+		"sourceRoot": "../src/node-canvas-text",
+		"esModuleInterop": true,
+		"outDir": "dist",
+		"typeRoots": [
+			"node_modules/@types",
+			"@types"
+		]
 	},
 	"include": [
 		"src/**/*.ts"

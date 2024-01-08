@@ -1,26 +1,15 @@
 import * as opentype from 'opentype.js';
-import { DrawOptions, DrawRectangle } from './index';
+import { DrawOptions, DrawRectangle, measureText } from './index';
 import drawText from './index';
 import { createCanvas } from 'canvas';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as tex_linebreak from 'tex-linebreak';
 const dir = path.dirname(__filename);
 // then get the parent
 const parentdir = path.dirname(path.dirname(dir));
 const ps_test_files = path.join(parentdir, 'ps_test_files');
 // then get the test file at ps_test_files
-
-const test_filename1 = 'testgroups.psd';
-// const test_filename2 = 'testnogroups.psd';
-// const test_filename3 = 'testgroups.psd';
-const test_file1 = path.join(ps_test_files, test_filename1);
-// const test_file2 = path.join(ps_test_files, test_filename2);
-// const test_file3 = path.join(ps_test_files, test_filename3);
-//F:\workspace\ag-psd\test\write\write-text\expected.psd
-// const expected_file = path.join(dir, "test","write","write-text",'expected.psd');
-// just read as an array of bytes
-
-const test_raw = "/Users/nikita/Library/CloudStorage/GoogleDrive-monstermash2124@gmail.com/My Drive/Hard Boiled Scans/Josou-off-kai/raw/00037.png";
 
 
 async function testthing() {
@@ -34,25 +23,33 @@ async function testthing() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, 500, 500);
     var font = await opentype.load('/Users/nikita/Library/Fonts/CCWildWordsLower-Regular.ttf')
-
-    drawText(ctx, "this is a long string", font, {
-        x: 60,
-        y: 30,
-        width: 110,
-        height: 100,
-    }, {
-        minSize: 18,
-        maxSize: 18,
+    const fontSize = 48;
+    const teststring = "This is a really \n*rather*\nlong string!!!!!!! WOOOOO!!!!! YEAH!!!!!!!!!!";
+    const textDescentAlignment = "box";
+    var options = {
+        minSize: 10,
+        maxSize: fontSize,
         hAlign: "center",
         vAlign: "center",
         drawRect: true,
         textFillStyle: "#000000",
         rectFillOnlyText: true,
-        fitMethod: "box",
-    })
-
-    // save the canvas as a png
+        textDescentAlignment: textDescentAlignment,
+        fitMethod: "linebreaks",
+        leading: 1.2,
+    } as DrawOptions;
+    var bbox = {
+        x: 60,
+        y: 30,
+        width: 400,
+        height: 400,
+    } as DrawRectangle;
+    drawText(ctx, teststring, font, bbox, options);
+    // save the canvas as a png sds
     fs.writeFileSync('out.png', canvas.toBuffer())
+
+}
+function texLineBreakTest() {
 
 }
 
