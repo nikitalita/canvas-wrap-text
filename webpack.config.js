@@ -1,7 +1,7 @@
 // webpack.config.js
 const path = require('path');
 const mode = process.env.NODE_ENV || 'development';
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   mode: mode,
   entry: './test/browsertest.ts',
