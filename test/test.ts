@@ -23,7 +23,7 @@ async function testthing() {
     // fill canvas with white
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, 500, 500);
-    var font = opentype.loadSync(path.join(parentdir, 'demo', 'TestFont.ttf'))
+    var font = opentype.loadSync(path.join(parentdir, 'demo', 'DejaVuSans.ttf'))
     const fontSize = 48;
     const textDescentAlignment = "box";
     var options = {
@@ -52,7 +52,7 @@ async function testthing() {
 function texLineBreakTest() {
     const testString = "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
     let thing = GetBreaks(testString, true);
-    var font = opentype.loadSync(path.join(parentdir, 'demo', 'TestFont.ttf'))
+    var font = opentype.loadSync(path.join(parentdir, 'demo', 'DejaVuSans.ttf'))
     const fontSize = 48;
     const textDescentAlignment = "box";
     var options = {

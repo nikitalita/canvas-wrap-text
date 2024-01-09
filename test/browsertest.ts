@@ -10,7 +10,7 @@ const element = document.querySelector('#textparent') as HTMLElement;
 
 // get the text from the element
 
-const fontPath = 'TestFont.ttf';
+const fontPath = 'DejaVuSans.ttf';
 opentype.load(fontPath, (err, font) => {
     if (err) throw err;
 
