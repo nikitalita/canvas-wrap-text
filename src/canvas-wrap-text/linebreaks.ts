@@ -1,13 +1,6 @@
 // import { Rules, Break } from '@cto.af/linebreak'
 import { measureText } from '.'
 import { hyphenateSync } from 'hyphen/en-us';
-// let Rules: typeof import('@cto.af/linebreak').Rules;
-// async function getUnified(): Promise<typeof import('@cto.af/linebreak').Rules> {
-//     if (typeof Rules !== 'undefined') return Rules;
-//     const mod = await (eval(`import('@cto.af/linebreak')`) as Promise<typeof import('@cto.af/linebreak')>);
-//     Rules = mod.Rules
-//     return Rules;
-// }
 import LineBreaker from 'linebreak';
 
 export interface Brk {

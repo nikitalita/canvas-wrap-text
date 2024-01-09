@@ -22,11 +22,6 @@ export interface DrawOptions {
     vAlign: "bottom" | "center" | "top" | "middle" | "baseline";
 }
 
-class Break {
-    position: number = 0;
-    required: boolean = false;
-}
-
 export interface DrawRectangle {
     height: number;
     width: number;
