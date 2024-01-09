@@ -10,8 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "tsc -p tsconfig.json",
-    "build-debug": "npm run prepublish && webpack",
-    "build": "npm run prepublish && webpack --mode production",
+    "build": "tsc -p tsconfig.json",
     "start": "webpack serve"
   },
   "keywords": [
