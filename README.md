@@ -8,7 +8,7 @@ Draws your string on a _canvas_, fit inside of a rectangle, with linebreaks at a
 
 ## Installation
 
-```npm install node-canvas-text canvas opentype.js --save```
+```npm install canvas-wrap-text canvas opentype.js --save```
 
 ## Run Demo
 
