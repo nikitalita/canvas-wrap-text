@@ -98,9 +98,8 @@ export function GetLines(breaks: Brk[], maxWidth: number, measurefn: (text: stri
                 // We need to break it up
                 while (potentialWidth > maxWidth) {
                     let i = 0;
-                    let word = text.trimEnd();
-                    for (i = word.length - 1; i > 0; i--) {
-                        let substr = word.slice(0, i);
+                    for (i = text.trimEnd().length - 1; i > 0; i--) {
+                        let substr = text.slice(0, i);
                         brkWidth = measurefn(substr);
                         potentialWidth = width + brkWidth;
                         if (potentialWidth <= maxWidth) {
@@ -112,8 +111,8 @@ export function GetLines(breaks: Brk[], maxWidth: number, measurefn: (text: stri
                         // Just add one character and push it
                         i = 1;
                     }
-                    let substr = word.slice(0, i);
-                    text = word.slice(i);
+                    let substr = text.slice(0, i);
+                    text = text.slice(i);
                     lines.push(substr.trimEnd());
                     line = '';
                     width = 0;
