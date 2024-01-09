@@ -1,5 +1,5 @@
 import * as opentype from 'opentype.js';
-import drawText from '../src/node-canvas-text/index';
+import drawText from '../src/canvas-wrap-text/index';
 const keycode = require('keycode');
 // test test2
 // then get the test file at ps_test_files

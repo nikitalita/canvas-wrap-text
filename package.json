@@ -1,11 +1,11 @@
 {
-  "name": "node-canvas-text",
-  "version": "1.0.2",
-  "description": "Using a provided Opentype.js font object, draws a string, sized to fit inside a given rectangle on an HTML5 canvas",
+  "name": "canvas-wrap-text",
+  "version": "0.1.0",
+  "description": "Using a provided Opentype.js font object, draws a string, fitting it into a given rectangle with line breaks at appropriate places.",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaivi/node-canvas-text.git"
+    "url": "https://github.com/nikitalita/canvas-wrap-text.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -21,7 +21,7 @@
     "rectangle",
     "canvas2d"
   ],
-  "author": "Kai Vik",
+  "author": "Nikitalita",
   "license": "ISC",
   "devDependencies": {
     "@types/hyphen": "^1.6.7",

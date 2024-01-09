@@ -1,6 +1,6 @@
-# node-canvas-text
+# canvas-wrap-text
 
-Draws your string on a _canvas_, fit inside of a rectangle. I had to make this, because _measureText()_ from node-canvas is unpredictable, and ignores font selectors besides font-size and font-family.
+Draws your string on a _canvas_, fit inside of a rectangle, with linebreaks at appropriate places and optional hyphenation.
 
 ## Requirements:
 * [node-canvas](https://github.com/Automattic/node-canvas) to draw onto
@@ -10,6 +10,10 @@ Draws your string on a _canvas_, fit inside of a rectangle. I had to make this, 
 
 ```npm install node-canvas-text canvas opentype.js --save```
 
+## Run Demo
+
+```npm run start```
+
 ## Parameters
 
 This module exports a single function with signature:
@@ -18,7 +22,7 @@ This module exports a single function with signature:
 2. a string to draw
 3. font object
 4. bounding rectangle ```{ x, y, width, height }```
-5. options ```{ minSize, maxSize, granularity, hAlign, vAlign, fitMethod, drawRect }```
+5. options (see below)
 
 ### Options
 
@@ -27,13 +31,18 @@ This module exports a single function with signature:
 * **granularity**: a step, in which to scale font size ```float```
 * **hAlign**: horizontal text alignment ```'left' | 'center' | 'right'```
 * **vAlign**: vertical text alignment ```'top' | 'center' | 'bottom'```
-* **fitMethod**: ```'baseline' | 'box'```
+* **leading**: leading ratio for line spacing ```float```
+* **textDescentAlignment**: Whether or not the bottom of the text should be aligned to the baseline or the box ```'baseline' | 'box'```
+* **fitMethod**: 'shrink' turns off linebreaks ```'linebreaks' | 'shrink'```
+* **hyphenate**: enable hyphenation for linebreaks ```boolean```
 * **drawRect**: draw the bounding rectangle ```'true' | 'false'```
 * **textFillStyle**: fill style for text ```string```
 * **rectFillStyle**: fill style for rectangle ```string```
 * **rectFillOnlyText**: fill only the exact resulting text rectangle, not the bounding one ```'true' | 'false'```
 * **textPadding**: text padding ```float```
 * **fillPadding**: fill padding ```float```
+* **textOuterStrokeWidth**: width of the outer stroke (outline) of the text (0 to disable) ```int```
+* **textOuterStrokeStyle**: stroke style for text outer stroke ```string```
 
 #### Defaults
 
@@ -44,24 +53,24 @@ This module exports a single function with signature:
     granularity: 1,
     hAlign: 'left',
     vAlign: 'bottom',
-    fitMethod: 'box',
+    leading: 1.2,
+    hyphenate: false,
+    fitMethod: 'linebreaks',
+    textDescentAlignment: 'box',
     textFillStyle: '#000',
-    rectFillStyle: '#fff',
+    rectFillStyle: 'transparent',
     rectFillOnlyText: false,
+    textOuterStrokeWidth: 0,
+    textOuterStrokeStyle: '#FFFFFF',
     textPadding: 0,
     fillPadding: 0,
     drawRect: false
 }
 ```
 
-### Fit method: box vs baseline
-
-![fitMethod: box](http://i.imgur.com/wuLdnPs.jpg)
-![fitMethod: baseline](http://i.imgur.com/oxJQvYZ.jpg)
-
 ## Example
 ```javascript
-import drawText from 'node-canvas-text'
+import drawText from 'canvas-wrap-text'
 import opentype from 'opentype.js'
 import Canvas from 'canvas'
 
@@ -107,7 +116,7 @@ drawText(ctx, titleString, titleFont, headerRect,
         maxSize: 100,
         vAlign: 'bottom',
         hAlign: 'left',
-        fitMethod: 'box',
+        textDescentAlignment: 'box',
         drawRect: drawRect} );
 
 drawText(ctx, priceString, priceFont, priceRect,
@@ -116,7 +125,7 @@ drawText(ctx, priceString, priceFont, priceRect,
         maxSize: 200,
         hAlign: 'right',
         vAlign: 'bottom',
-        fitMethod: 'box',
+        textDescentAlignment: 'box',
         drawRect: drawRect } );
 
 drawText(ctx, barcodeString, barcodeFont, barcodeRect,
@@ -125,6 +134,6 @@ drawText(ctx, barcodeString, barcodeFont, barcodeRect,
         maxSize: 200,
         hAlign: 'center',
         vAlign: 'center',
-        fitMethod: 'box',
+        textDescentAlignment: 'box',
         drawRect: drawRect });
 ```
