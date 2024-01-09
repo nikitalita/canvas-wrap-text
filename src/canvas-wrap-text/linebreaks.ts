@@ -1,5 +1,3 @@
-// import { Rules, Break } from '@cto.af/linebreak'
-import { measureText } from '.'
 import { hyphenateSync } from 'hyphen/en-us';
 import LineBreaker from 'linebreak';
 
