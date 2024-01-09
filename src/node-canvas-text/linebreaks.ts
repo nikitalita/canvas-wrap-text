@@ -13,15 +13,11 @@ import LineBreaker from 'linebreak';
 export interface Brk {
     text: string,
     position: number,
-    width: number,
-    strippedWidth: number,
     isHyphenatedBreak: boolean,
     required: boolean
 }
 
 export function GetBreaks(textstr: string, hyphenate: boolean = false) {
-    // const ruls_cls = await getUnified();
-    // const breakGen = rules.breaks(text);
     const breaker = new LineBreaker(textstr);
     const breaks: Brk[] = [];
     let lastpos = 0;
@@ -36,8 +32,6 @@ export function GetBreaks(textstr: string, hyphenate: boolean = false) {
             breaks.push({
                 text: '',
                 position,
-                width: 0,
-                strippedWidth: 0,
                 isHyphenatedBreak: false,
                 required
             });
@@ -53,8 +47,6 @@ export function GetBreaks(textstr: string, hyphenate: boolean = false) {
                     breaks.push({
                         text: split,
                         position: startPos + split.length + combLen,
-                        width: 0,
-                        strippedWidth: 0,
                         isHyphenatedBreak: i < hyphen_splits.length - 1 ? true : false,
                         required: i < hyphen_splits.length - 1 ? false : required
                     });
@@ -66,20 +58,13 @@ export function GetBreaks(textstr: string, hyphenate: boolean = false) {
         breaks.push({
             text,
             position,
-            width: 0,
-            strippedWidth: 0,
             isHyphenatedBreak: false,
             required
         });
     }
     return breaks;
 }
-export function SetBreakWidths(breaks: Brk[], measurefn: (text: string) => number) {
-    for (let brk of breaks) {
-        brk.width = measurefn(brk.text);
-        brk.strippedWidth = measurefn(brk.text.trimEnd());
-    }
-}
+
 export function GetLines(breaks: Brk[], maxWidth: number, measurefn: (text: string) => number) {
     let lines: string[] = [];
     let line = '';

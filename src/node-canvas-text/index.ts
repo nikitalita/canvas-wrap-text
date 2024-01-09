@@ -1,7 +1,7 @@
 import { Font } from "opentype.js";
 
 // import default from linebreak
-import { Brk, GetBreaks, SetBreakWidths, GetLines } from './linebreaks';
+import { GetBreaks, GetLines } from './linebreaks';
 export interface DrawOptions {
     drawRect: boolean;
     textDescentAlignment: "baseline" | "box";

@@ -4,7 +4,7 @@ import drawText from '../src/node-canvas-text/index';
 import { createCanvas } from 'canvas';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Brk, GetBreaks, SetBreakWidths, GetLines } from '../src/node-canvas-text/linebreaks';
+import { GetBreaks, GetLines } from '../src/node-canvas-text/linebreaks';
 const dir = path.dirname(__filename);
 // then get the parent
 const parentdir = path.dirname(dir);
@@ -72,7 +72,6 @@ function texLineBreakTest() {
         return measureText(text, font, fontSize, options.textDescentAlignment).width;
     }
 
-    SetBreakWidths(thing, measure);
     const lines = GetLines(thing, 400, measure);
     console.log(lines);
 }
