@@ -131,7 +131,7 @@ export default function drawText(
             vAlign: 'bottom',
             leading: 1.2,
             hyphenate: false,
-            fitMethod: 'shrink',
+            fitMethod: 'linebreaks',
             textDescentAlignment: 'box',
             textFillStyle: '#000',
             rectFillStyle: 'transparent',
