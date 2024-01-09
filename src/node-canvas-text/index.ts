@@ -17,6 +17,8 @@ export interface DrawOptions {
     rectFillStyle: string;
     textFillStyle: string;
     textPadding: number;
+    textOuterStrokeWidth: number;
+    textOuterStrokeStyle: string;
     vAlign: "bottom" | "center" | "top" | "middle" | "baseline";
 }
 
@@ -134,6 +136,8 @@ export default function drawText(
             textFillStyle: '#000',
             rectFillStyle: 'transparent',
             rectFillOnlyText: false,
+            textOuterStrokeWidth: 0,
+            textOuterStrokeStyle: '#FFFFFF',
             textPadding: 0,
             fillPadding: 0,
             drawRect: false
@@ -261,8 +265,19 @@ export default function drawText(
     for (let i = lines.length - 1; i >= 0; i--) {
         var line = lines[i];
         let fontPath = fontObject.getPath(line.text, calcXPos(line.width, paddedRect.x), lineYPos, fontSize);
-        fontPath.fill = options.textFillStyle;
         ctx.save();
+        if (options.textOuterStrokeWidth > 0 && options.textOuterStrokeStyle != 'transparent') {
+            let old_stroke = fontPath.stroke;
+            let old_stroke_width = fontPath.strokeWidth;
+            fontPath.strokeWidth = options.textOuterStrokeWidth;
+            fontPath.stroke = options.textOuterStrokeStyle;
+            fontPath.fill = 'transparent';
+            fontPath.draw(ctx);
+            fontPath.strokeWidth = old_stroke_width;
+            fontPath.stroke = old_stroke;
+        }
+
+        fontPath.fill = options.textFillStyle;
         fontPath.draw(ctx);
         ctx.restore();
         lineYPos -= lineHeight;

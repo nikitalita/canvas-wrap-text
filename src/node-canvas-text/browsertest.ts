@@ -100,9 +100,11 @@ function render(font: opentype.Font) {
         leading: lineHeight,
         hAlign: hAlign as "left" | "center" | "right",
         vAlign: vAlign as "top" | "center" | "middle" | "bottom",
-        drawRect: true,
+        drawRect: false,
         textFillStyle: "#000000",
         rectFillOnlyText: true,
+        textOuterStrokeWidth: 10,
+        textOuterStrokeStyle: "white",
         textDescentAlignment: "box",
         hyphenate: true,
         fitMethod: "linebreaks"
