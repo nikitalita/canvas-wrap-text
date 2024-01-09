@@ -1,10 +1,10 @@
 import * as opentype from 'opentype.js';
-import { DrawOptions, DrawRectangle, measureText } from './index';
-import drawText from './index';
+import { DrawOptions, DrawRectangle, measureText } from '../src/node-canvas-text/index';
+import drawText from '../src/node-canvas-text/index';
 import { createCanvas } from 'canvas';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Brk, GetBreaks, SetBreakWidths, GetLines } from './linebreaks';
+import { Brk, GetBreaks, SetBreakWidths, GetLines } from '../src/node-canvas-text/linebreaks';
 const dir = path.dirname(__filename);
 // then get the parent
 const parentdir = path.dirname(dir);

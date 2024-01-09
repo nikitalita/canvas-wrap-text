@@ -4,7 +4,7 @@ const mode = process.env.NODE_ENV || 'development';
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: mode,
-  entry: './src/node-canvas-text/browsertest.ts',
+  entry: './test/browsertest.ts',
   devtool: 'inline-source-map',
   module: {
     rules: [
@@ -34,7 +34,7 @@ module.exports = {
     compress: true,
     // hot: true,
     liveReload: true,
-    watchFiles: ['src/**/*', 'demo/index.html'],
+    watchFiles: ['src/**/*', 'test/browsertest.ts', 'demo/index.html'],
     port: 9000,
     open: true,
     static:{
